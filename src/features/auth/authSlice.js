@@ -23,7 +23,7 @@ export const loginUser = createAsyncThunk("auth/loginUser", async ({ email, pass
 
 export const googleLogin = createAsyncThunk("auth/googleLogin", async () => {
     const gogoleProvider = new GoogleAuthProvider();
-    const data=await signInWithPopup(auth,gogoleProvider)
+    const data = await signInWithPopup(auth, gogoleProvider)
     return data.user.email
 })
 
@@ -36,6 +36,9 @@ const authSlice = createSlice({
         },
         setUser: (state, action) => {
             state.email = action.payload;
+            state.isLoading = false;
+        },
+        toggleLoading: (state) => {
             state.isLoading = false;
         }
     },
@@ -86,6 +89,6 @@ const authSlice = createSlice({
     }
 })
 
-export const { logout, setUser } = authSlice.actions;
+export const { logout, setUser,toggleLoading } = authSlice.actions;
 export default authSlice.reducer;
 

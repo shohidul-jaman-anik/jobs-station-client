@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { toast } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/login.svg";
-import { createUser } from "../features/auth/authSlice";
+import { createUser, googleLogin } from "../features/auth/authSlice";
 
 
 
 const Signup = () => {
   const { handleSubmit, register, reset, control } = useForm();
+  const { isLoading, email, isError, error } = useSelector(state => state.auth)
   const password = useWatch({ control, name: "password" });
   const confirmPassword = useWatch({ control, name: "confirmPassword" });
   const navigate = useNavigate();
@@ -30,10 +32,27 @@ const Signup = () => {
     }
   }, [password, confirmPassword]);
 
+  useEffect(() => {
+    if (!isLoading && email) {
+      navigate("/")
+    }
+  }, [isLoading, email])
+
   const onSubmit = (data) => {
     dispatch(createUser({ email: data.email, password: data.password }))
     console.log(data);
   };
+
+  const handleGoogleLogin = () => {
+    dispatch(googleLogin())
+  }
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error)
+    }
+  }, [isError, error])
+
 
   return (
     <div className='flex h-screen items-center pt-14'>
@@ -98,6 +117,13 @@ const Signup = () => {
                   </span>
                 </p>
               </div>
+              <button
+                type='button'
+                className='font-bold text-white py-3 rounded-full bg-primary w-full'
+                onClick={handleGoogleLogin}
+              >
+                Login in with Google
+              </button>
             </div>
           </form>
         </div>
